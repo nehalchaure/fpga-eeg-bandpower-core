@@ -32,5 +32,24 @@ t=np.arrange(WIN_LEN)/FS
 
 # x= clean 10 Hz sin wave inside the band + small random noise
 
+x=0.5*np.sin(2*np.pi*10*t) + 0.1*np.random.randn(WIN_LEN)
+
+
+#------------------------------------------------------
+#3. DESIGN A FLOATING-POINT FIR BAND-PASS FILTER
+#------------------------------------------------------
+
+# firwin is a SciPy function that creates FIR filters.
+# firwin returns N_TAPS coefficients for an FIR filter.
+
+# cutoff=[8,30], pass_zero=False -> band-pass between 8 and 30 Hz. [web:71][web:74][web:152]
+
+b=firwin(
+N_TAPS,[BAND[0],BAND[1]],pass_zero=False,fs=FS
+)
+
+#------------------------------------------------------
+#4.QUANTIZE FILTER COEFFICIENTS TO Q15 (FOR FPGA)
+#------------------------------------------------------
 
 
