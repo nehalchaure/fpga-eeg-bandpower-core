@@ -70,6 +70,7 @@ In the code:
 
 ```python
 b_q = np.round(b * (2**15)).astype(np.int16)
+```
 
 ### Multiplication in Q1.15
 
