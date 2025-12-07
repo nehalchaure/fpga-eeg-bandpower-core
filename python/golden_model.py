@@ -52,4 +52,34 @@ N_TAPS,[BAND[0],BAND[1]],pass_zero=False,fs=FS
 #4.QUANTIZE FILTER COEFFICIENTS TO Q15 (FOR FPGA)
 #------------------------------------------------------
 
+#Multiply by SCALE to move from float [-1,1) to integer range, then round and cast to 16-bit signed integers.
 
+b_q = np.round(b * SCALE).astype(np.int16)
+
+# -----------------------------
+# 5. FILTER THE SIGNAL (FLOAT) AND COMPUTE BANDPOWER
+# -----------------------------
+# lfilter applies the FIR filter 'b' to signal 'x' to produce 'y'. [web:152]
+y = lfilter(b, [1.0], x)
+
+# Bandpower = mean of squared filtered samples over the window. [web:72][web:78]
+power_float = np.mean(y ** 2)
+
+# -----------------------------
+# 6. QUANTIZE INPUT SAMPLES TO Q15 (FOR FPGA)
+# -----------------------------
+# Same idea as coefficients: map float samples into int16 range.
+x_q = np.round(x * SCALE).astype(np.int16)
+
+# -----------------------------
+# 7. SAVE TEST VECTORS TO TEXT FILES
+# -----------------------------
+# These files will be read by your Verilog testbench later.
+# fmt="%d" -> write numbers as integers in text form. [web:87][web:91][web:101][web:153]
+
+np.savetxt("python/test_vectors/coeffs.txt", b_q, fmt="%d")       # Q15 filter coeffs
+np.savetxt("python/test_vectors/samples.txt", x_q, fmt="%d")      # Q15 input samples
+np.savetxt("python/test_vectors/golden.txt",
+           np.array([power_float]), fmt="%.10f")                   # float reference power
+
+print("Wrote coeffs.txt, samples.txt, golden.txt")
