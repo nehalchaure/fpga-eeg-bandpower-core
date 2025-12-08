@@ -21,7 +21,7 @@ SCALE=2**15      # SCALE FACTOR FOR Q15 FIXED POINTS (MAPS [-1,1) TO INT16)
 
 #Time axis:0,1/FS...........WIN_LEN-1/FS
 
-t=np.arrange(WIN_LEN)/FS
+t=np.arange(WIN_LEN)/FS
 
 # [0,1/256,2/256..........255/256]
 # using np. means using a funcction from numpy library
